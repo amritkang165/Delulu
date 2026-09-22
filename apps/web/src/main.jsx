@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 const initialIdea = { startupName: '', ideaDescription: '', targetCustomer: '', problem: '', solution: '', industry: 'SaaS', businessModel: 'Subscription' };
 const dimensions = [
   { key: 'problemClarity', label: 'Problem clarity', note: 'Can a real person recognize the pain?' },
@@ -54,12 +55,13 @@ function Header({ page, setPage }) {
       <button className={page === 'evaluate' ? 'active' : ''} onClick={() => setPage('evaluate')}>Evaluate</button>
       <button className={page === 'method' ? 'active' : ''} onClick={() => setPage('method')}>How it works</button>
       <button className={page === 'about' ? 'active' : ''} onClick={() => setPage('about')}>About</button>
+      <button className={page === 'market' ? 'active' : ''} onClick={() => setPage('market')}>Market scan</button>
     </nav>
     <span className="topbar-note"><span className="status-dot" /> v0.1 / illustrative</span>
   </header>;
 }
 
-function EvaluatePage({ idea, update, submit, isEvaluating }) {
+function EvaluatePage({ idea, update, submit, isEvaluating, error }) {
   return <section className="page-shell evaluate-page">
     <div className="page-intro"><div><p className="eyebrow">01 / The evaluator</p><h1>Is it a <em>business</em>,<br />or a very elaborate hobby?</h1></div><p className="intro-note">Give us the plain-language version. We will return the questions your pitch is quietly avoiding.</p></div>
     <form className="idea-form" onSubmit={submit}>
@@ -73,7 +75,7 @@ function EvaluatePage({ idea, update, submit, isEvaluating }) {
         <label className="field field-wide"><span>What problem are they living with?</span><textarea required rows="4" value={idea.problem} onChange={update('problem')} placeholder="Describe the frustrating, expensive, recurring thing." /></label>
         <label className="field field-wide"><span>What will you build first?</span><textarea required rows="4" value={idea.solution} onChange={update('solution')} placeholder="Describe the smallest useful version, not the cinematic universe." /></label>
       </div>
-      <div className="form-footer"><p><span className="asterisk">*</span> Vibes are charming. Evidence is more useful.</p><button className="primary-button" type="submit" disabled={isEvaluating}>{isEvaluating ? 'Interrogating the idea...' : 'Run the reality check'} <span>↗</span></button></div>
+      <div className="form-footer"><div><p><span className="asterisk">*</span> Vibes are charming. Evidence is more useful.</p>{error && <p className="form-error" role="alert">{error}</p>}</div><button className="primary-button" type="submit" disabled={isEvaluating}>{isEvaluating ? 'Interrogating the idea...' : 'Run the reality check'} <span>↗</span></button></div>
     </form>
   </section>;
 }
@@ -86,8 +88,30 @@ function AboutPage() {
   return <section className="page-shell content-page about-page"><div className="page-intro"><div><p className="eyebrow">03 / About the project</p><h1>Comedy for the<br /><em>confirmation bias.</em></h1></div><p className="intro-note">Built for founders who want the truth, but would prefer it with a little seasoning.</p></div><div className="about-layout"><div className="about-quote">“The infrastructure is ready.<br /><span>The customers remain theoretical.</span>”</div><div className="about-copy"><p>DeluluScore is an open-source experiment in making startup evaluation more transparent, more useful, and less likely to arrive wearing a black turtleneck.</p><p>The long-term product combines structured labeling, classical ML, recommendations, and grounded roasts. For now, this prototype is a local illustrative assessment. It is honest about that because the first validation test is not lying to ourselves.</p><button className="primary-button" onClick={() => window.location.hash = '#evaluate'}>Evaluate an idea <span>↗</span></button></div></div></section>;
 }
 
+function MarketPage({ idea, setPage }) {
+  const [query, setQuery] = useState(idea.ideaDescription);
+  const [marketReport, setMarketReport] = useState(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [error, setError] = useState('');
+  const scan = async (event) => {
+    event.preventDefault();
+    setError('');
+    setIsScanning(true);
+    try {
+      const response = await fetch(`${API_BASE}/api/market-report`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ideaDescription: query, targetCustomer: idea.targetCustomer, industry: idea.industry }) });
+      if (!response.ok) throw new Error('The market scan could not be completed.');
+      setMarketReport(await response.json());
+    } catch (requestError) {
+      setError(`${requestError.message} Is the API running on port 8000?`);
+    } finally {
+      setIsScanning(false);
+    }
+  };
+  return <section className="page-shell market-page"><div className="page-intro"><div><p className="eyebrow">04 / Market scan</p><h1>Who else had<br /><em>this exact idea?</em></h1></div><p className="intro-note">We will show cited competitors, active players, revenue evidence, and failed attempts. No invented market-size confetti.</p></div><form className="market-form" onSubmit={scan}><label className="field"><span>Describe the idea to research</span><textarea required rows="5" value={query} onChange={(event) => setQuery(event.target.value)} /></label><div className="form-footer"><p><span className="asterisk">*</span> Live research needs a configured data provider.</p><button className="primary-button" type="submit" disabled={isScanning}>{isScanning ? 'Searching the archives...' : 'Scan the market'} <span>↗</span></button></div></form>{error && <p className="form-error" role="alert">{error}</p>}{marketReport && <div className="market-result"><div className={`provider-banner ${marketReport.status}`}><p className="panel-kicker">Research status</p><h2>{marketReport.status === 'complete' ? 'The receipts are in.' : 'The research desk needs a source.'}</h2>{marketReport.caveats.map((caveat) => <p key={caveat}>{caveat}</p>)}</div><div className="market-metrics"><div><strong>{marketReport.similarCount ?? '—'}</strong><span>similar ideas found</span></div><div><strong>{marketReport.executedCount ?? '—'}</strong><span>verified executions</span></div><div><strong>{marketReport.competitors.length}</strong><span>cited competitors</span></div><div><strong>{marketReport.failedPlayers.length}</strong><span>failure cases</span></div></div>{marketReport.competitors.length > 0 && <div className="company-list"><p className="panel-kicker">Competitive players</p>{marketReport.competitors.map((company) => <article key={company.name}><div><h3>{company.name}</h3><p>{company.description}</p></div><span>{company.revenue ?? 'Revenue not disclosed'}</span></article>)}</div>}</div>}</section>;
+}
+
 function ReportPage({ idea, report, reset, setPage }) {
-  return <section className="page-shell report-page" aria-live="polite"><div className="report-header"><div><p className="eyebrow">Report / {idea.startupName}</p><h1>Here is where<br /><em>the idea gets real.</em></h1></div><div className="report-actions"><button className="text-button" onClick={reset}>← Edit idea</button><button className="text-button" onClick={() => setPage('method')}>Read the method →</button></div></div><div className="report-grid"><div className="uncertainty-panel"><p className="panel-kicker">Overall uncertainty</p><div className="big-score">{report.uncertainty}<span>/10</span></div><p className="score-verdict">{report.uncertainty >= 8 ? 'The vibes are doing unpaid labour.' : report.uncertainty >= 6 ? 'Promising, but assumption-heavy.' : 'A reasonably testable starting point.'}</p><div className="dial"><span style={{ transform: `rotate(${report.uncertainty * 18 - 90}deg)` }} /></div></div><div className="findings-panel"><p className="panel-kicker">What the first pass sees</p><div className="dimension-list">{dimensions.map((dimension) => <div className="dimension" key={dimension.key}><div className="dimension-top"><span>{dimension.label}</span><strong>{report.scores[dimension.key]}<small>/10</small></strong></div><ScoreBar score={report.scores[dimension.key]} /><p>{dimension.note}</p></div>)}</div></div></div><div className="insight-grid"><article className="insight-card risk-card"><p className="panel-kicker">Risk signals</p><ul>{report.risks.map((risk) => <li key={risk}>{risk}</li>)}</ul></article><article className="insight-card recommendation-card"><p className="panel-kicker">Next move</p><p className="recommendation">{report.recommendation}</p><span className="arrow-badge">↗</span></article><article className="insight-card roast-card"><p className="panel-kicker">A constructive roast</p><p className="roast">“{report.roast}”</p><span className="roast-signoff">With affection, mostly.</span></article></div><p className="report-disclaimer">Local illustrative assessment. Not a trained-model prediction, investment advice, or a prophecy.</p></section>;
+  return <section className="page-shell report-page" aria-live="polite"><div className="report-header"><div><p className="eyebrow">Report / {idea.startupName}</p><h1>Here is where<br /><em>the idea gets real.</em></h1></div><div className="report-actions"><button className="text-button" onClick={reset}>← Edit idea</button><button className="text-button" onClick={() => setPage('market')}>Scan the market →</button></div></div><div className="report-grid"><div className="uncertainty-panel"><p className="panel-kicker">Overall uncertainty</p><div className="big-score">{report.uncertainty}<span>/10</span></div><p className="score-verdict">{report.uncertainty >= 8 ? 'The vibes are doing unpaid labour.' : report.uncertainty >= 6 ? 'Promising, but assumption-heavy.' : 'A reasonably testable starting point.'}</p><div className="dial"><span style={{ transform: `rotate(${report.uncertainty * 18 - 90}deg)` }} /></div></div><div className="findings-panel"><p className="panel-kicker">What the first pass sees</p><div className="dimension-list">{dimensions.map((dimension) => <div className="dimension" key={dimension.key}><div className="dimension-top"><span>{dimension.label}</span><strong>{report.scores[dimension.key]}<small>/10</small></strong></div><ScoreBar score={report.scores[dimension.key]} /><p>{dimension.note}</p></div>)}</div></div></div><div className="insight-grid"><article className="insight-card risk-card"><p className="panel-kicker">Risk signals</p><ul>{report.risks.map((risk) => <li key={risk}>{risk}</li>)}</ul></article><article className="insight-card recommendation-card"><p className="panel-kicker">Next move</p><p className="recommendation">{report.recommendation}</p><span className="arrow-badge">↗</span></article><article className="insight-card roast-card"><p className="panel-kicker">A constructive roast</p><p className="roast">“{report.roast}”</p><span className="roast-signoff">With affection, mostly.</span></article></div><p className="report-disclaimer">Local illustrative assessment. Not a trained-model prediction, investment advice, or a prophecy.</p></section>;
 }
 
 function App() {
@@ -95,12 +119,27 @@ function App() {
   const [idea, setIdea] = useState(initialIdea);
   const [report, setReport] = useState(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [error, setError] = useState('');
   useEffect(() => { const onHash = () => setPageState(window.location.hash.replace('#', '') || 'evaluate'); window.addEventListener('hashchange', onHash); return () => window.removeEventListener('hashchange', onHash); }, []);
   const setPage = (nextPage) => { window.location.hash = `#${nextPage}`; };
   const update = (field) => (event) => setIdea((current) => ({ ...current, [field]: event.target.value }));
-  const submit = (event) => { event.preventDefault(); setIsEvaluating(true); window.setTimeout(() => { setReport(evaluateIdea(idea)); setIsEvaluating(false); setPage('report'); }, 450); };
+  const submit = async (event) => {
+    event.preventDefault();
+    setError('');
+    setIsEvaluating(true);
+    try {
+      const response = await fetch(`${API_BASE}/api/evaluate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(idea) });
+      if (!response.ok) throw new Error('The evaluator returned an unexpected response.');
+      setReport(await response.json());
+      setPage('report');
+    } catch (requestError) {
+      setError(`${requestError.message} Is the API running on port 8000?`);
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
   const reset = () => { setReport(null); setIdea(initialIdea); setPage('evaluate'); };
-  const visiblePage = report && page === 'report' ? <ReportPage idea={idea} report={report} reset={reset} setPage={setPage} /> : page === 'method' ? <MethodPage /> : page === 'about' ? <AboutPage /> : <EvaluatePage idea={idea} update={update} submit={submit} isEvaluating={isEvaluating} />;
+  const visiblePage = report && page === 'report' ? <ReportPage idea={idea} report={report} reset={reset} setPage={setPage} /> : page === 'method' ? <MethodPage /> : page === 'about' ? <AboutPage /> : page === 'market' ? <MarketPage idea={idea} setPage={setPage} /> : <EvaluatePage idea={idea} update={update} submit={submit} isEvaluating={isEvaluating} error={error} />;
   return <main><Header page={page} setPage={setPage} />{visiblePage}<footer className="footer shell"><span>DeluluScore / research before rocket fuel</span><span>Made for better questions.</span></footer></main>;
 }
 

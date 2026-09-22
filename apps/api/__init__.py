@@ -1,0 +1,1 @@
+"""DeluluScore API application."""

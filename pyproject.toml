@@ -9,13 +9,19 @@ description = "A comedy-first startup idea analysis engine."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+	"fastapi>=0.115",
 	"ipykernel>=6.29",
+	"joblib>=1.4",
 	"matplotlib>=3.8",
 	"numpy>=1.26",
 	"pandas>=2.2",
 	"scikit-learn>=1.4",
 	"seaborn>=0.13",
+	"uvicorn[standard]>=0.30",
 ]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -355,6 +355,25 @@ Before contributing model improvements, please document:
 
 ---
 
+## Local Prototype
+
+The current vertical slice includes a React frontend and a FastAPI evaluation service. The evaluator uses an illustrative rule engine until the ML inference contract is complete.
+
+Start the API from the project root:
+
+```bash
+.venv/bin/python -m uvicorn apps.api.main:app --reload --port 8000
+```
+
+Start the frontend in a second terminal:
+
+```bash
+cd apps/web
+npm run dev
+```
+
+Open `http://127.0.0.1:5173` and submit an idea. The frontend calls `POST /api/evaluate` and renders the returned report.
+
 ## 📜 License
 
 License: To be decided.
