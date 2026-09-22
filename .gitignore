@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.env
+.env.*
+!.env.example
+ml/models/
+ml/data/raw/*
+ml/data/processed/*
+.DS_Store
