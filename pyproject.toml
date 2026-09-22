@@ -8,6 +8,14 @@ version = "0.1.0"
 description = "A comedy-first startup idea analysis engine."
 readme = "README.md"
 requires-python = ">=3.10"
+dependencies = [
+	"ipykernel>=6.29",
+	"matplotlib>=3.8",
+	"numpy>=1.26",
+	"pandas>=2.2",
+	"scikit-learn>=1.4",
+	"seaborn>=0.13",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
