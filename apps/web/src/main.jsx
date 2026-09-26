@@ -88,7 +88,30 @@ function AboutPage() {
   return <section className="page-shell content-page about-page"><div className="page-intro"><div><p className="eyebrow">03 / About the project</p><h1>Comedy for the<br /><em>confirmation bias.</em></h1></div><p className="intro-note">Built for founders who want the truth, but would prefer it with a little seasoning.</p></div><div className="about-layout"><div className="about-quote">“The infrastructure is ready.<br /><span>The customers remain theoretical.</span>”</div><div className="about-copy"><p>DeluluScore is an open-source experiment in making startup evaluation more transparent, more useful, and less likely to arrive wearing a black turtleneck.</p><p>The long-term product combines structured labeling, classical ML, recommendations, and grounded roasts. For now, this prototype is a local illustrative assessment. It is honest about that because the first validation test is not lying to ourselves.</p><button className="primary-button" onClick={() => window.location.hash = '#evaluate'}>Evaluate an idea <span>↗</span></button></div></div></section>;
 }
 
-function MarketPage({ idea, setPage }) {
+function CompanyPage() {
+  const [startupName, setStartupName] = useState('');
+  const [website, setWebsite] = useState('');
+  const [report, setReport] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [error, setError] = useState('');
+  const search = async (event) => {
+    event.preventDefault();
+    setError('');
+    setIsSearching(true);
+    try {
+      const response = await fetch(`${API_BASE}/api/company-report`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ startupName, website: website || null }) });
+      if (!response.ok) throw new Error('The company report could not be loaded.');
+      setReport(await response.json());
+    } catch (requestError) {
+      setError(`${requestError.message} Is the API running on port 8000?`);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+  return <section className="page-shell company-page"><div className="page-intro"><div><p className="eyebrow">05 / Company intelligence</p><h1>Find the receipts<br /><em>behind the startup.</em></h1></div><p className="intro-note">Search a company, then inspect its funding, official records, news, revenue evidence, and failure signals in one cited report.</p></div><form className="company-form" onSubmit={search}><label className="field"><span>Startup or company name</span><input required value={startupName} onChange={(event) => setStartupName(event.target.value)} placeholder="e.g. WeWork" /></label><label className="field"><span>Known website <small>Optional disambiguator.</small></span><input value={website} onChange={(event) => setWebsite(event.target.value)} placeholder="https://example.com" /></label><div className="form-footer"><p><span className="asterisk">*</span> Every claim will need a source.</p><button className="primary-button" type="submit" disabled={isSearching}>{isSearching ? 'Calling the research desk...' : 'Build company report'} <span>↗</span></button></div></form>{error && <p className="form-error" role="alert">{error}</p>}{report && <div className="company-report"><div className={`provider-banner ${report.status}`}><p className="panel-kicker">{report.startupName} / research status</p><h2>{report.status === 'complete' ? 'The source desk is partly ready.' : 'The source desk needs credentials.'}</h2><p>{report.summary}</p></div><div className="source-grid">{report.sourceStatuses.map((source) => <article key={source.provider} className={`source-card ${source.status}`}><strong>{source.provider.replace('_', ' ')}</strong><span>{source.status.replace('_', ' ')}</span><p>{source.message}</p></article>)}</div><section className="official-records" aria-labelledby="official-records-title"><div className="official-records-heading"><p className="panel-kicker">Verified filings</p><h2 id="official-records-title">Official records</h2></div>{report.officialRecords.length ? <div className="official-record-list">{report.officialRecords.map((record) => <article className="official-record" key={`${record.authority}-${record.registrationId || record.legalName}`}><div><span className="record-authority">{record.authority.replace('_', ' ')}</span><h3>{record.legalName || 'Legal name unavailable'}</h3><p>{[record.registrationId, record.status, record.incorporationDate].filter(Boolean).join(' · ')}</p></div>{record.sourceUrl && <a href={record.sourceUrl} target="_blank" rel="noreferrer">View source ↗</a>}</article>)}</div> : <p className="empty-records">No official filing records were returned for this search.</p>}</section><div className="limitations"><p className="panel-kicker">Evidence rules</p>{report.limitations.map((limitation) => <p key={limitation}>• {limitation}</p>)}</div></div>}</section>;
+}
+
+function MarketPage({ idea }) {
   const [query, setQuery] = useState(idea.ideaDescription);
   const [marketReport, setMarketReport] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
@@ -139,7 +162,7 @@ function App() {
     }
   };
   const reset = () => { setReport(null); setIdea(initialIdea); setPage('evaluate'); };
-  const visiblePage = report && page === 'report' ? <ReportPage idea={idea} report={report} reset={reset} setPage={setPage} /> : page === 'method' ? <MethodPage /> : page === 'about' ? <AboutPage /> : page === 'market' ? <MarketPage idea={idea} setPage={setPage} /> : <EvaluatePage idea={idea} update={update} submit={submit} isEvaluating={isEvaluating} error={error} />;
+  const visiblePage = report && page === 'report' ? <ReportPage idea={idea} report={report} reset={reset} setPage={setPage} /> : page === 'method' ? <MethodPage /> : page === 'about' ? <AboutPage /> : page === 'market' ? <MarketPage idea={idea} setPage={setPage} /> : page === 'company' ? <CompanyPage /> : <EvaluatePage idea={idea} update={update} submit={submit} isEvaluating={isEvaluating} error={error} />;
   return <main><Header page={page} setPage={setPage} />{visiblePage}<footer className="footer shell"><span>DeluluScore / research before rocket fuel</span><span>Made for better questions.</span></footer></main>;
 }
 
