@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 
+from apps.api import company_intelligence
 from apps.api.main import app
 
 
@@ -66,3 +67,35 @@ def test_market_report_is_explicit_when_provider_is_missing() -> None:
     assert response.json()["status"] == "provider_required"
     assert response.json()["similarCount"] is None
     assert response.json()["competitors"] == []
+
+
+def test_company_report_includes_sec_record_and_citations(monkeypatch) -> None:
+    monkeypatch.setenv("SEC_USER_AGENT", "DeluluScore contact: test@example.com")
+    captured = {}
+
+    def fake_lookup(name, user_agent):
+        captured["user_agent"] = user_agent
+        return {
+            "authority": "sec",
+            "legalName": name,
+            "registrationId": "CIK 0000000123",
+            "status": "Latest SEC filing: 10-K on 2026-02-01",
+            "sourceUrl": "https://data.sec.gov/submissions/CIK0000000123.json",
+        }
+
+    monkeypatch.setattr(
+        company_intelligence,
+        "lookup_company",
+        fake_lookup,
+    )
+
+    response = client.post("/api/company-report", json={"startupName": "Example Inc"})
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["status"] == "complete"
+    assert captured["user_agent"] == "DeluluScore contact: test@example.com"
+    assert body["officialRecords"][0]["registrationId"] == "CIK 0000000123"
+    sec_status = next(item for item in body["sourceStatuses"] if item["provider"] == "sec")
+    assert sec_status["status"] == "available"
+    assert "https://data.sec.gov/submissions/CIK0000000123.json" in sec_status["citations"]

@@ -8,6 +8,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from .company_intelligence import (
+    CompanyReportRequest,
+    CompanyReportResponse,
+    build_company_report,
+)
+
 
 class IdeaRequest(BaseModel):
     startupName: str = Field(min_length=1, max_length=120)
@@ -144,3 +150,8 @@ def market_report(request: MarketReportRequest) -> MarketReportResponse:
     raise NotImplementedError(
         "Configure the provider adapter for MARKET_RESEARCH_API_URL before enabling live research."
     )
+
+
+@app.post("/api/company-report", response_model=CompanyReportResponse)
+def company_report(request: CompanyReportRequest) -> CompanyReportResponse:
+    return build_company_report(request)
