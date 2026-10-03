@@ -1,393 +1,169 @@
-# 🦄 DeluluScore
+# DeluluScore
 
-> **Every startup idea deserves a reality check.**
+<p align="center">
+  <img src="https://img.shields.io/badge/status-prototype-orange" alt="Status: Prototype" />
+  <img src="https://img.shields.io/badge/python-3.12+-blue" alt="Python 3.12+" />
+  <img src="https://img.shields.io/badge/react-vite-61DAFB" alt="React + Vite" />
+  <img src="https://img.shields.io/badge/fastapi-0.115+-green" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/ml-scikit_learn-purple" alt="Scikit-learn" />
+</p>
 
-DeluluScore is a comedy-first startup idea analysis engine that combines **classical machine learning, structured evaluation, and AI-generated roasts** to help founders identify weak assumptions before spending weeks building something nobody asked for.
+> Every startup idea deserves a reality check.
 
-Because sometimes your billion-dollar idea is just a Google Form wearing a blockchain hoodie.
+DeluluScore is a comedy-first startup evaluation product that helps founders stress-test their assumptions before turning a pitch into a product roadmap. It blends structured scoring, lightweight ML, market research hooks, and a roast engine that is more useful than a motivational quote.
 
----
-
-## ✨ What It Does
-
-Submit a startup idea and receive a structured reality check covering:
-
-* Problem clarity.
-* Technical feasibility.
-* Customer acquisition difficulty.
-* Monetization uncertainty.
-* Competitive pressure.
-* Validation readiness.
-* MVP complexity.
-
-Then get:
-
-* A transparent uncertainty assessment.
-* Detected risk patterns.
-* Actionable recommendations.
-* A personalized AI-generated roast.
-* A report you can share with friends, co-founders, or your brutally honest roommate.
+Built for the moment when a founder says, “This is obviously a huge opportunity,” and the product replies, “Great. Let’s test the assumptions before we deploy Kubernetes.”
 
 ---
 
-## 🎯 The Philosophy
+## Why it exists
 
-DeluluScore is **not** a magical startup-success predictor.
+Most early startup ideas sound compelling until someone asks a few uncomfortable questions:
 
-It does not claim to know whether a startup will succeed or fail.
+- Who exactly is the customer?
+- What problem are they already paying to solve?
+- Why is this better than the status quo?
+- What is the smallest version we can validate?
+- What would make this fail in six weeks?
 
-Instead, it evaluates uncertainty and assumption risk based on the information provided.
-
-A high score means more assumptions need validation—not that the idea is objectively bad.
-
-The system separates:
-
-1. Structured evaluation.
-2. ML predictions.
-3. Recommendations.
-4. AI-generated comedy.
-
-This keeps the product entertaining without turning the ML into decorative theater.
+DeluluScore turns those questions into a structured score and a grounded recommendation.
 
 ---
 
-## 🔥 Example
+## What the product does
 
-### Input
-
-> An AI-powered laundry marketplace for college students using blockchain to optimize washing cycles.
-
-### Possible Findings
-
-* Unclear need for blockchain.
-* Two-sided marketplace complexity.
-* Low validation evidence.
-* Unclear monetization.
-* Potentially manageable core problem.
-
-### Roast
-
-> You have designed the infrastructure for 10,000 customers who currently exist only in your imagination. Perhaps interview three of them before deploying Kubernetes.
-
-### Recommendation
-
-Start with a simple marketplace MVP and validate whether students will actually pay.
-
-*Example output is illustrative.*
+- Scores startup ideas across product, technical, market, and monetization dimensions
+- Surfaces assumption-heavy areas instead of pretending to know the future
+- Generates a short, practical recommendation for the next validation step
+- Delivers a deliberately funny roast that is still grounded in the actual score
+- Gives founders a more honest way to think before they build
 
 ---
 
-## 🧠 How It Works
+## Tech stack
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><strong>Frontend</strong><br />React · Vite · CSS<br /><em>polished UX</em></td>
+      <td align="center"><strong>API</strong><br />FastAPI · Pydantic · Uvicorn<br /><em>robust service layer</em></td>
+      <td align="center"><strong>ML</strong><br />Python · scikit-learn · Pandas<br /><em>signal + scoring</em></td>
+      <td align="center"><strong>Data & Ops</strong><br />PostgreSQL · Docker · GitHub Actions<br /><em>deployable workflow</em></td>
+    </tr>
+  </table>
+</div>
+
+---
+
+## System flow
 
 ```text
-Startup Idea
-     │
-     ▼
-Structured Questionnaire
-     │
-     ▼
-Feature Extraction
-     │
-     ▼
-Preprocessing Pipeline
-     │
-     ▼
-ML Prediction Engine
-     │
-     ▼
-Structured Findings
-     │
-     ├──► Recommendations
-     │
-     └──► Grounded Roast Prompt
-                  │
-                  ▼
-             LLM Roast
-                  │
-                  ▼
-             Final Report
+Startup idea
+   ↓
+Structured evaluation
+   ↓
+Risk/assumption extraction
+   ↓
+ML + rule-based scoring
+   ↓
+Actionable recommendation
+   ↓
+Grounded roast + final report
 ```
 
-The ML engine produces structured findings first.
-
-The LLM turns those findings into entertaining language.
-
-The LLM does not invent the underlying scores.
+The scoring layer stays honest: it explains uncertainty, not destiny.
 
 ---
 
-## 🏗️ Planned Architecture
+## Project structure
 
 ```text
 deluluscore/
 ├── apps/
-│   ├── web/                 # Next.js frontend
-│   └── api/                 # FastAPI backend
-│
+│   ├── web/                 # React + Vite frontend
+│   └── api/                 # FastAPI service layer
 ├── ml/
-│   ├── data/
-│   │   ├── raw/
-│   │   └── processed/
-│   ├── notebooks/
 │   ├── src/
-│   │   ├── preprocessing.py
-│   │   ├── features.py
-│   │   ├── train.py
-│   │   ├── evaluate.py
-│   │   └── predict.py
 │   ├── models/
-│   └── requirements.txt
-│
-├── packages/
-│   └── schemas/
-│
+│   └── notebooks/
 ├── docs/
-│   ├── methodology.md
-│   ├── labeling-rubric.md
-│   └── model-card.md
-│
-├── scripts/
-│   └── seed_dataset.py
-│
-├── docker-compose.yml
 ├── README.md
-├── PRD.md
-└── LICENSE
+├── pyproject.toml
+├── requirements.txt
+├── LICENSE
+└── .env.example
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## Quick start
 
-| Layer               | Technology                        |
-| ------------------- | --------------------------------- |
-| Frontend            | Next.js, TypeScript, Tailwind CSS |
-| Backend             | FastAPI, Pydantic                 |
-| ML                  | Python, Pandas, Scikit-learn      |
-| Database            | PostgreSQL                        |
-| Model tracking      | MLflow, planned                   |
-| AI roast generation | LLM API                           |
-| Deployment          | Vercel + Render/Railway           |
+### 1) Install Python dependencies
 
----
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-## 📊 Machine Learning
-
-The project is designed around real, reproducible ML experimentation.
-
-### Planned Tasks
-
-| Task                        | Approach                                    |
-| --------------------------- | ------------------------------------------- |
-| Feasibility prediction      | Regression                                  |
-| Validation readiness        | Classification                              |
-| Startup archetype detection | Multi-class classification                  |
-| Uncertainty estimation      | Regression + calibrated interpretation      |
-| Feature analysis            | Feature importance and sensitivity analysis |
-
-### Candidate Models
-
-* Dummy baselines.
-* Ridge Regression.
-* Logistic Regression.
-* Random Forest.
-* Gradient Boosting.
-
-### Evaluation
-
-Models will be evaluated using:
-
-* Cross-validation.
-* Held-out test data.
-* MAE.
-* RMSE.
-* R².
-* Precision.
-* Recall.
-* F1-score.
-* Confusion matrices.
-* Calibration and error analysis.
-
-> No fake accuracy numbers. Results will be published after experiments are actually run.
-
----
-
-## 🗂️ Data Strategy
-
-The project will use a combination of:
-
-* Human-labeled startup ideas.
-* Public startup descriptions where permitted.
-* Synthetic ideas for pipeline testing.
-* Optional user feedback.
-
-The initial research target is approximately **100–200 startup ideas**, with multiple evaluations per idea where possible.
-
-Synthetic data will be clearly identified and will not be treated as real-world ground truth.
-
-Every model experiment will document:
-
-* Dataset version.
-* Label definitions.
-* Preprocessing.
-* Train/test strategy.
-* Metrics.
-* Limitations.
-
----
-
-## 🎭 Roast Modes
-
-| Mode   | Style                                    |
-| ------ | ---------------------------------------- |
-| Soft   | Friendly and encouraging                 |
-| Honest | Direct and practical                     |
-| Brutal | Ruthless toward questionable assumptions |
-
-The system roasts business decisions and product assumptions—not users personally.
-
----
-
-## 🚀 Roadmap
-
-### Phase 0 — Research
-
-* [ ] Finalize evaluation rubric.
-* [ ] Define prediction targets.
-* [ ] Design annotation workflow.
-* [ ] Collect initial examples.
-
-### Phase 1 — ML Baseline
-
-* [ ] Build dataset pipeline.
-* [ ] Implement preprocessing.
-* [ ] Train dummy baselines.
-* [ ] Train Ridge Regression.
-* [ ] Train Logistic Regression.
-* [ ] Evaluate and document results.
-
-### Phase 2 — Backend
-
-* [ ] Build FastAPI service.
-* [ ] Add request validation.
-* [ ] Integrate model inference.
-* [ ] Add PostgreSQL persistence.
-* [ ] Add model versioning.
-
-### Phase 3 — Roast Engine
-
-* [ ] Build grounded prompt templates.
-* [ ] Add roast intensity.
-* [ ] Add output validation.
-* [ ] Add fallback behavior.
-
-### Phase 4 — Frontend
-
-* [ ] Build landing page.
-* [ ] Build idea submission flow.
-* [ ] Build loading experience.
-* [ ] Build results dashboard.
-* [ ] Add shareable report cards.
-
-### Phase 5 — Iteration
-
-* [ ] Collect user feedback.
-* [ ] Analyze model errors.
-* [ ] Expand dataset.
-* [ ] Add Delulu Simulator.
-* [ ] Retrain and compare models.
-
----
-
-## 🧪 Example Evaluation Dimensions
-
-| Dimension                | What It Measures                    |
-| ------------------------ | ----------------------------------- |
-| Problem Reality          | Is there a meaningful problem?      |
-| Technical Feasibility    | Can the MVP realistically be built? |
-| Acquisition Difficulty   | Can the founder reach users?        |
-| Monetization Uncertainty | Is there a plausible revenue path?  |
-| Competitive Pressure     | How difficult is differentiation?   |
-| Validation Readiness     | What evidence supports the idea?    |
-| MVP Complexity           | How much must be built initially?   |
-
----
-
-## ⚠️ Limitations
-
-DeluluScore is an experimental decision-support tool.
-
-Its outputs may be affected by:
-
-* Subjective human labels.
-* Dataset bias.
-* Missing information.
-* Industry differences.
-* Model limitations.
-* Uncertain market conditions.
-
-A score is an estimate, not a verdict.
-
-The product is not financial, legal, investment, or professional business advice.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome, especially in:
-
-* Dataset design.
-* Evaluation rubrics.
-* ML experimentation.
-* Feature engineering.
-* Frontend design.
-* Roast templates.
-* Documentation.
-* Testing.
-
-Before contributing model improvements, please document:
-
-1. What changed.
-2. Why it changed.
-3. What data was used.
-4. Which metrics improved or worsened.
-5. Any new limitations.
-
----
-
-## Local Prototype
-
-The current vertical slice includes a React frontend and a FastAPI evaluation service. The evaluator uses an illustrative rule engine until the ML inference contract is complete.
-
-Start the API from the project root:
+### 2) Start the API
 
 ```bash
 .venv/bin/python -m uvicorn apps.api.main:app --reload --port 8000
 ```
 
-Start the frontend in a second terminal:
+### 3) Start the frontend
 
 ```bash
 cd apps/web
+npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173` and submit an idea. The frontend calls `POST /api/evaluate` and renders the returned report.
+Then open:
 
-## 📜 License
-
-License: To be decided.
+```text
+http://127.0.0.1:5173
+```
 
 ---
 
-## 👨‍💻 Author
+## Current status
+
+This project is currently a strong prototype with:
+
+- a clean evaluation flow
+- a polished browser-based experience
+- a structured scoring model and recommendation layer
+- a product tone that favors honesty over hype
+
+It is intentionally designed to be playful without being fake.
+
+---
+
+## Roadmap
+
+- [ ] finalize the evaluation rubric
+- [ ] improve ML signal quality
+- [ ] integrate stronger market intelligence
+- [ ] add richer report sharing and export flows
+- [ ] expand dataset quality and labeling processes
+- [ ] ship production-ready deployment workflows
+
+---
+
+## License
+
+License is still being finalized for the repository.
+
+---
+
+## Author
 
 Built by [Muneer Alam](https://github.com/Muneer320).
 
-A project exploring the intersection of **machine learning, product thinking, and unnecessarily honest feedback**.
+A project at the intersection of product sense, machine learning, and the uncomfortable truth that “this seems like a good idea” is not yet evidence.
 
----
-
-> Got a billion-dollar idea?
+> Got a startup idea?
 >
-> Let's find out if it's worth more than the domain name.
+> Let’s see if it survives the first brutally honest conversation.

@@ -13,6 +13,13 @@ const dimensions = [
   { key: 'competitionLevel', label: 'Competition level', note: 'How crowded is the alternative set?' },
 ];
 
+const stackGroups = [
+  { title: 'Frontend', items: ['React', 'Vite', 'CSS', 'Google Fonts'] },
+  { title: 'API', items: ['FastAPI', 'Pydantic', 'Uvicorn'] },
+  { title: 'ML', items: ['Python', 'scikit-learn', 'Pandas', 'Joblib'] },
+  { title: 'Ops', items: ['PostgreSQL', 'Docker', 'GitHub', 'MLflow'] },
+];
+
 function scoreText(text, fallback = 4) {
   const words = text.trim().split(/\s+/).filter(Boolean).length;
   return Math.min(9, Math.max(2, fallback + Math.round(words / 18)));
@@ -84,8 +91,12 @@ function MethodPage() {
   return <section className="page-shell content-page"><div className="page-intro"><div><p className="eyebrow">02 / The method</p><h1>No crystal ball.<br /><em>Just better questions.</em></h1></div><p className="intro-note">The score is a conversation starter, not a prophecy with a logo.</p></div><div className="method-grid"><article className="method-card method-dark"><span className="card-number">01</span><h2>Describe the reality.</h2><p>We ask about the person, the pain, the smallest useful solution, and who is supposed to pay for this whole adventure.</p></article><article className="method-card method-mint"><span className="card-number">02</span><h2>Surface the assumptions.</h2><p>Six dimensions turn the pitch into a readable set of risks: demand, complexity, money, distribution, and competition.</p></article><article className="method-card method-blue"><span className="card-number">03</span><h2>Leave with a next move.</h2><p>A score without an action is just decorative anxiety. Each report points you toward the next useful validation step.</p></article></div><div className="method-footer"><span>Important distinction</span><strong>We measure uncertainty, not startup destiny.</strong><p>A high DeluluScore means more evidence is needed. It does not mean the idea is bad, and it definitely does not mean we have met your customers.</p></div></section>;
 }
 
+function TechStackSection() {
+  return <div className="stack-section"><div className="stack-header"><div><p className="eyebrow">Tech stack</p><h2>Designed for a sharp prototype and a serious future.</h2></div><p className="intro-note stack-note">A simple system with enough depth to score ideas, investigate markets, and still keep the tone human.</p></div><div className="stack-grid">{stackGroups.map((group) => <article key={group.title} className="stack-card"><p className="panel-kicker">{group.title}</p><ul>{group.items.map((item) => <li key={item}>{item}</li>)}</ul></article>)}</div></div>;
+}
+
 function AboutPage() {
-  return <section className="page-shell content-page about-page"><div className="page-intro"><div><p className="eyebrow">03 / About the project</p><h1>Comedy for the<br /><em>confirmation bias.</em></h1></div><p className="intro-note">Built for founders who want the truth, but would prefer it with a little seasoning.</p></div><div className="about-layout"><div className="about-quote">“The infrastructure is ready.<br /><span>The customers remain theoretical.</span>”</div><div className="about-copy"><p>DeluluScore is an open-source experiment in making startup evaluation more transparent, more useful, and less likely to arrive wearing a black turtleneck.</p><p>The long-term product combines structured labeling, classical ML, recommendations, and grounded roasts. For now, this prototype is a local illustrative assessment. It is honest about that because the first validation test is not lying to ourselves.</p><button className="primary-button" onClick={() => window.location.hash = '#evaluate'}>Evaluate an idea <span>↗</span></button></div></div></section>;
+  return <section className="page-shell content-page about-page"><div className="page-intro"><div><p className="eyebrow">03 / About the project</p><h1>Comedy for the<br /><em>confirmation bias.</em></h1></div><p className="intro-note">Built for founders who want the truth, but would prefer it with a little seasoning.</p></div><div className="about-layout"><div className="about-quote">“The infrastructure is ready.<br /><span>The customers remain theoretical.</span>”</div><div className="about-copy"><p>DeluluScore is an open-source experiment in making startup evaluation more transparent, more useful, and less likely to arrive wearing a black turtleneck.</p><p>The long-term product combines structured labeling, classical ML, recommendations, and grounded roasts. For now, this prototype is a local illustrative assessment. It is honest about that because the first validation test is not lying to ourselves.</p><button className="primary-button" onClick={() => window.location.hash = '#evaluate'}>Evaluate an idea <span>↗</span></button></div></div><TechStackSection /></section>;
 }
 
 function CompanyPage() {
